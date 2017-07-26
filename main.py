@@ -54,18 +54,15 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith(client.user.mention):
         namesize = len(client.user.mention)
+        words = re.findall(r"[\w']+", message.content[namesize:])
         if message.author.id in authUsers:
-            words = re.findall(r"[\w']+", message.content[namesize:])
-            if len(words) > 0 and words[0] == 'sudo' and words[1] in gitScript.commandsList.keys():
-                tmp = await gitScript.commandsList[words[1]](message)
-            elif len(message.content) == len(client.user.mention):
-                tmp = await client.send_message(message.channel, "Hello, " + message.author.mention + "!")
+            if len(words) > 0 and words[0] == 'sudo' and words[1] in gitScript.adminCommandsList.keys():
+                tmp = await gitScript.adminCommandsList[words[1]](message)
             elif len(words) > 0 and words[0] == 'sudo' and words[1] == "update":
                 await reloadGit(message)
             else:
                 tmp = await client.send_message(message.channel, "I'm sorry, " + message.author.mention + ", I can't do that.")
         elif len(authUsers) == 0 and message.channel.id == client.get_channel(botToken.home_channel).id:
-            words = re.findall(r"[\w']+", message.content[namesize:])
             if len(words) > 0 and words[0] == "takeown":
                 print ("Assigning Owner")
                 with open(authUserFile, "w") as authFile:
@@ -76,9 +73,12 @@ async def on_message(message):
                 print ("Updated AuthUsers:")
                 print(str(authUsers))
                 tmp = await client.send_message(message.channel, "Accepted " + message.author.mention + " as primary owner of this bot.")
-
+        elif len(words) > 0 and words[0] in gitScript.userCommandsList.keys():
+            gitScript.userCommandsList[words[0]](message)
+        elif len(message.content) == len(client.user.mention): # when the message is just a mention
+            tmp = await client.send_message(message.channel, "Hello, " + message.author.mention + "!")
         else:
-            reply = message.author.mention + ", you are not authorized to control this bot."
+            reply = message.author.mention + ", you do not have access to that command, or it does not exist."
             tmp = await client.send_message(message.channel, reply)
 
 client.run(botToken.value)

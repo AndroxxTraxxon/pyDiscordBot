@@ -4,8 +4,16 @@ import csv
 import re
 import os
 
+muted = False
+
+async def send_message(channel, message):
+    tmp = None
+    if not muted:
+        tmp = await send_message(channel, message)
+    return tmp
+
 async def test(message):
-    tmp = await client.send_message(message.channel, "Testing, 1, 2, 3!")
+    tmp = await send_message(message.channel, "Testing, 1, 2, 3!")
     return tmp
 
 async def sleep(message):
@@ -50,11 +58,12 @@ async def removeAuthUser(message):
             tmp = await client.send_message(message.channel, "There was no user to authorize!")
 
 async def dispHelp(message):
-    await client.send_message(message.channel, "Valid commands for this bot: " + str(commandsList.keys()))
+    await client.send_message(message.channel, "Valid user commands for this bot: " + str(userCommandsList.keys()))
     return
 
-commandsList = {
-    "test": test,
+userCommandsList = {"test": test}
+
+adminCommandsList = {
     "sleep": sleep,
     "authorize": addAuthUser,
     "auth": addAuthUser,
@@ -64,6 +73,8 @@ commandsList = {
     "deop": removeAuthUser,
     "help": dispHelp,
     }
+for key in userCommandsList.keys():
+    adminCommandsList[key] = userCommandsList[key]
 
 def directory():
     return os.path.dirname(os.path.realpath(__file__))
