@@ -48,3 +48,4 @@ Temporary Items
 
 authUsers.csv
 __pycache__/
+botToken.py

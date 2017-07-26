@@ -6,13 +6,13 @@ import os
 import importlib
 import git
 import gitScript
+import botToken # you write this file! copy from botToken.py.sample.
 
 client = discord.Client()
 gitScript.client = client
 authUsers = []
 authUserFile = "authUsers.csv"
-token = 'MzM5NjI0Mjg0NjgxMTQyMjc0.DFmw9g.4s0a1KbjZcY8Y0Ju1TMMEZ2SpWU'
-home_channel = "339622824631205899"
+
 
 async def reloadGit(message):
     await client.send_message(message.channel, "Updating Command Set...")
@@ -46,7 +46,7 @@ async def on_ready():
         with open(authUserFile, "w+") as outputFile:
             print("Initializing auth file as " + authUserFile)
     if len(authUsers) == 0:
-        await client.send_message(client.get_channel(home_channel), "Someone Claim Me!")
+        await client.send_message(client.get_channel(botToken.home_channel), "Someone Claim Me!")
 
 @client.event
 async def on_message(message):
@@ -62,7 +62,7 @@ async def on_message(message):
                 await reloadGit(message)
             else:
                 tmp = await client.send_message(message.channel, "I'm sorry, " + message.author.mention + ", I can't do that.")
-        elif len(authUsers) == 0 and message.channel.id == client.get_channel(home_channel).id:
+        elif len(authUsers) == 0 and message.channel.id == client.get_channel(botToken.home_channel).id:
             words = re.findall(r"[\w']+", message.content[namesize:])
             if len(words) > 0 and words[0] == "takeown":
                 print ("Assigning Owner")
@@ -79,4 +79,4 @@ async def on_message(message):
             reply = message.author.mention + ", you are not authorized to control this bot."
             tmp = await client.send_message(message.channel, reply)
 
-client.run(token)
+client.run(botToken.value)
