@@ -12,6 +12,8 @@ client = discord.Client()
 gitScript.client = client
 authUsers = []
 authUserFile = "authUsers.csv"
+gitScript.authUserFile = authUserFile
+gitScript.authUsers = authUsers
 
 
 async def reloadGit(message):
