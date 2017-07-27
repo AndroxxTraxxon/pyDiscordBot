@@ -25,7 +25,7 @@ async def reloadGit(message):
     o.pull()
     importlib.reload(gitScript)
     gitScript.client = client
-    await client.send_message(message.channel, "Command Set updated: " + str(gitScript.commandsList.keys()))
+    await client.send_message(message.author, "Command Set updated: " + str(gitScript.adminCommandsList.keys()))
     return
 
 @client.event
@@ -58,6 +58,8 @@ async def on_message(message):
         if message.author.id in authUsers:
             if len(words) > 0 and words[0] == 'sudo' and words[1] in gitScript.adminCommandsList.keys():
                 tmp = await gitScript.adminCommandsList[words[1]](message)
+            elif len(words) > 0 and words[0] in gitScript.userCommandsList.keys():
+                tmp = await gitScript.userCommandsList[words[0]](message)
             elif len(words) > 0 and words[0] == 'sudo' and words[1] == "update":
                 await reloadGit(message)
             else:
@@ -80,5 +82,10 @@ async def on_message(message):
         else:
             reply = message.author.mention + ", you do not have access to that command, or it does not exist."
             tmp = await client.send_message(message.channel, reply)
-
+    else:
+        namesize = len(client.user.mention)
+        words = re.findall(r"[\w']+", message.content[namesize:])
+        for word in words:
+            if word in gitScript.foulMouth:
+                tmp = await gitScript.send_message(message.channel, "HEY! " + message.author.mention + "WATCH YOUR LANGUAGE!")
 client.run(botToken.value)
