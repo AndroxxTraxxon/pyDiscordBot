@@ -29,7 +29,8 @@ async def reloadGit(message):
     o.fetch()
     my_repo.head.ref.set_tracking_branch(o.refs.master)
     o.pull()
-    my_repo.__del__()
+    del o
+    del my_repo
     importlib.reload(gitScript)
     gitScript.client = client
     await client.send_message(message.channel, "Command Set updated: " + str(gitScript.commandsList.keys()))
