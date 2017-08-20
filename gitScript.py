@@ -84,7 +84,6 @@ async def dispAdminHelp(message):
     return tmp
 
 commandsListAdmin = {
-    "test": test,
     "sleep": sleep,
     "authorize": addAuthUser,
     "auth": addAuthUser,
@@ -96,7 +95,8 @@ commandsListAdmin = {
     }
 
 commandsList = {
-
+    "help": dispHelp,
+    "test": test
 }
 
 def directory():

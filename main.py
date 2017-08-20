@@ -24,15 +24,16 @@ messages = []
 
 async def reloadGit(message):
     await client.send_message(message.channel, "Updating Command Set...")
-    my_repo = git.Repo(self.rorepo.self.rorepo.working_tree_dir)
-    with my_repo.remotes.origin as o:
-        o.fetch()
-        my_repo.head.ref.set_tracking_branch(o.refs.master)
-        o.pull()
+    my_repo = git.Repo(gitScript.directory())
+    o = my_repo.remotes.origin
+    o.fetch()
+    my_repo.head.ref.set_tracking_branch(o.refs.master)
+    o.pull()
     my_repo.__del__()
     importlib.reload(gitScript)
     gitScript.client = client
     await client.send_message(message.channel, "Command Set updated: " + str(gitScript.commandsList.keys()))
+    await client.send_message(message.channel, "Admin Command Set Updated" + str(gitScript.commandsListAdmin.keys()))
     return
 
 @client.event
