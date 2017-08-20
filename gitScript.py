@@ -76,8 +76,12 @@ async def removeAuthUser(message):
             tmp = await client.send_message(message.channel, "There was no user to authorize!")
 
 async def dispHelp(message):
-    await client.send_message(message.channel, "Valid commands for this bot: " + str(commandsList.keys()))
-    return
+    tmp = await client.send_message(message.channel, "Valid commands for this bot: " + str(commandsList.keys()))
+    return tmp
+
+async def dispAdminHelp(message):
+    tmp = await client.send_message(message.channel, "Valid admin commands for this bot: " + str(commandsListAdmin.keys()))
+    return tmp
 
 commandsListAdmin = {
     "test": test,
@@ -88,7 +92,7 @@ commandsListAdmin = {
     "deauth": removeAuthUser,
     "deauthorize": removeAuthUser,
     "deop": removeAuthUser,
-    "help": dispHelp,
+    "help": dispAdminHelp,
     }
 
 commandsList = {

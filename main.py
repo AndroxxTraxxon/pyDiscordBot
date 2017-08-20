@@ -1,25 +1,31 @@
+# Discord core required files
 import discord
 import asyncio
+
+# Files for text parsing
 import csv
 import re
+
+# Libraries for Git-Enabled Updating
 import os
 import importlib
 import git
 import gitScript
-import botToken # you write this file! copy from botToken.py.sample.
 
-client = discord.Client()
+# The botToken is used to uniquely identify your bot.
+import botToken # you write this file! copy from botToken.py.sample.
+print("Initializing...")
 authUsers = []
 authUserFile = "authUsers.csv"
+client = discord.Client()
 gitScript.initSequence(client, authUserFile, authUsers)
 messages = []
 
 
 async def reloadGit(message):
     await client.send_message(message.channel, "Updating Command Set...")
-
-    my_repo = git.Repo(gitScript.directory())
-    with o as my_repo.remotes.origin:
+    my_repo = git.Repo(self.rorepo.self.rorepo.working_tree_dir)
+    with my_repo.remotes.origin as o:
         o.fetch()
         my_repo.head.ref.set_tracking_branch(o.refs.master)
         o.pull()
@@ -31,11 +37,10 @@ async def reloadGit(message):
 
 @client.event
 async def on_ready():
-
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
-    print('------')
+    print('--------------------')
     print('Loading AuthUsers...')
     if os.path.isfile(authUserFile):
         with open(authUserFile, "r", newline = '') as authFile:
