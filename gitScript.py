@@ -4,6 +4,32 @@ import csv
 import re
 import os
 
+global client
+global authUserFile
+global authUsers
+global muted
+
+def initSequence(my_client, my_AUF, my_AU):
+    global client
+    client = my_client
+    global authUserFile
+    authUserFile = my_AUF
+    global authUsers
+    authUsers = my_AU
+    return
+
+async def mute(message):
+    global muted
+    muted = true
+    tmp = await client.send_message(message.channel, "... hmph ...")
+    return tmp
+
+async def unmute(message):
+    global muted
+    muted = false
+    tmp = await client.send_message(message.channel, "Ahhh, Freedom!")
+    return tmp
+
 async def test(message):
     tmp = await client.send_message(message.channel, "Testing, 1, 2, 3!")
     return tmp
@@ -11,7 +37,7 @@ async def test(message):
 async def sleep(message):
     tmp = await client.send_message(message.channel, "Goodnight!")
     tmp2 = await client.close()
-    return tmp2
+    return tmp
 
 async def addAuthUser(message):
     mentionList = []
@@ -53,7 +79,7 @@ async def dispHelp(message):
     await client.send_message(message.channel, "Valid commands for this bot: " + str(commandsList.keys()))
     return
 
-commandsList = {
+commandsListAdmin = {
     "test": test,
     "sleep": sleep,
     "authorize": addAuthUser,
@@ -64,6 +90,10 @@ commandsList = {
     "deop": removeAuthUser,
     "help": dispHelp,
     }
+
+commandsList = {
+
+}
 
 def directory():
     return os.path.dirname(os.path.realpath(__file__))
