@@ -93,8 +93,6 @@ commandsListAdmin = {
     "deop": removeAuthUser,
     "help": dispAdminHelp,
     }
-for key in userCommandsList.keys():
-    adminCommandsList[key] = userCommandsList[key]
 
 userCommandsList = {
     "help": dispHelp,
