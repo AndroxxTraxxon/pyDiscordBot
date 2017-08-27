@@ -80,7 +80,7 @@ async def on_message(message):
                         await reloadGit(message)
                     else:
                         reply = message.author.mention + ", that is not a known command."
-                elif len(authUsers) > 0 and words[0] == takeown:
+                elif len(authUsers) == 0 and words[0] == 'takeown':
                     print ("Assigning Owner")
                     with open(authUserFile, "w") as authFile:
                         writer = csv.writer(authFile, delimiter = ',',
