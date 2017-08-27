@@ -76,7 +76,7 @@ async def removeAuthUser(message):
             tmp = await client.send_message(message.channel, "There was no user to authorize!")
 
 async def dispHelp(message):
-    tmp = await client.send_message(message.channel, "Valid commands for this bot: " + str(userCommandsList.keys()))
+    tmp = await client.send_message(message.channel, "Valid commands for this bot: " + str(commandsList.keys()))
     return tmp
 
 async def dispAdminHelp(message):
@@ -94,7 +94,7 @@ commandsListAdmin = {
     "help": dispAdminHelp,
     }
 
-userCommandsList = {
+commandsList = {
     "help": dispHelp,
     "test": test
 }

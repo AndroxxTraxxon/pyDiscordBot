@@ -81,6 +81,7 @@ async def on_message(message):
                     else:
                         reply = message.author.mention + ", that is not a known command."
                 elif len(authUsers) == 0 and words[0] == 'takeown':
+                    # Assign ownership to the first person who writes "@Mention sudo takeown"
                     print ("Assigning Owner")
                     with open(authUserFile, "w") as authFile:
                         writer = csv.writer(authFile, delimiter = ',',
@@ -110,33 +111,4 @@ async def on_message(message):
         return
     if not reply == "":
         tmp = await client.send_message(message.channel, reply)
-
-
-        # if message.author.id in authUsers:
-        #     words = re.findall(r"[\w']+", message.content[namesize:])
-        #     if len(words) > 0 and words[0] == 'sudo' and words[1] in gitScript.commandsList.keys():
-        #         tmp = await gitScript.commandsList[words[1]](message)
-        #     elif len(message.content) == len(client.user.mention):
-        #         tmp = await client.send_message(message.channel, "Hello, " + message.author.mention + "!")
-        #     elif len(words) > 0 and words[0] == 'sudo' and words[1] == "update":
-        #         await reloadGit(message)
-        #     else:
-        #         tmp = await client.send_message(message.channel, "I'm sorry, " + message.author.mention + ", I can't do that.")
-        # elif len(authUsers) == 0 and message.channel.id == client.get_channel(botToken.home_channel).id:
-        #     words = re.findall(r"[\w']+", message.content[namesize:])
-        #     if len(words) > 0 and words[0] == "takeown":
-        #         print ("Assigning Owner")
-        #         with open(authUserFile, "w") as authFile:
-        #             writer = csv.writer(authFile, delimiter = ';',
-        #                 quotechar = '\'', quoting = csv.QUOTE_MINIMAL)
-        #             authUsers.append(message.author.id)
-        #             writer.writerow(authUsers)
-        #         print ("Updated AuthUsers:")
-        #         print(str(authUsers))
-        #         tmp = await client.send_message(message.channel, "Accepted " + message.author.mention + " as primary owner of this bot.")
-        #
-        # else:
-        #     reply = message.author.mention + ", you are not authorized to control this bot."
-        #     tmp = await client.send_message(message.channel, reply)
-
 client.run(botToken.value)
