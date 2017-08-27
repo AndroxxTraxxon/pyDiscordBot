@@ -68,8 +68,9 @@ async def on_message(message):
         words = re.findall(r"[\w']+", message.content[namesize:])
         if len(words) > 0:
             if words[0].lower() == "sudo":
+                words.pop(0) # remove "sudo" from words list.
                 if message.author.id in authUsers:
-                    words.pop(0) # remove "sudo" from words list.
+
                     #since "sudo" was written, we check the admin commandsList first, then the normal one.
                     if words[0] in gitScript.commandsListAdmin.keys():
                         await gitScript.commandsListAdmin[words[0]](message)
@@ -79,6 +80,16 @@ async def on_message(message):
                         await reloadGit(message)
                     else:
                         reply = message.author.mention + ", that is not a known command."
+                elif len(authUsers) > 0 and words[0] == takeown:
+                    print ("Assigning Owner")
+                    with open(authUserFile, "w") as authFile:
+                        writer = csv.writer(authFile, delimiter = ',',
+                            quotechar = '\'', quoting = csv.QUOTE_MINIMAL)
+                        authUsers.append(message.author.id)
+                        writer.writerow(authUsers)
+                    print ("Updated AuthUsers:")
+                    print(str(authUsers))
+                    tmp = await client.send_message(message.channel, "Accepted " + message.author.mention + " as primary owner of this bot.")
                 else:
                     reply = message.author.mention + ", you are not permitted to use Super User commands."
             # since "sudo" was not written, we will check the normal commandsList first.
