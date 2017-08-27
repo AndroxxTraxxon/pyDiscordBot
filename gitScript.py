@@ -31,7 +31,7 @@ async def unmute(message):
     return tmp
 
 async def test(message):
-    tmp = await client.send_message(message.channel, "Testing, 1, 2, 3!")
+    tmp = await send_message(message.channel, "Testing, 1, 2, 3!")
     return tmp
 
 async def sleep(message):
@@ -55,7 +55,7 @@ async def addAuthUser(message):
             print("AuthUsers Updated:")
             print(str(authUsers))
         else:
-            tmp = await client.send_message(message.channel, "There was no user to deauthorize!")
+            tmp = await client.send_message(message.channel, "There was no user to authorize!")
 
 async def removeAuthUser(message):
     mentionList = []
@@ -93,6 +93,8 @@ commandsListAdmin = {
     "deop": removeAuthUser,
     "help": dispAdminHelp,
     }
+for key in userCommandsList.keys():
+    adminCommandsList[key] = userCommandsList[key]
 
 commandsList = {
     "help": dispHelp,
