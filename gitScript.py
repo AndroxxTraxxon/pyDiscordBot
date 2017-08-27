@@ -4,32 +4,31 @@ import csv
 import re
 import os
 
-muted = False
+global client
+global authUserFile
+global authUsers
+global muted
 
-foulMouth = [
-    "fuck",
-    "fucker",
-    "fucking",
-    "fuker",
-    "fuk",
-    "fuckin",
-    "shit",
-    "motherfucker",
-    "damn",
-    "bastard",
-    "dick",
-    "bitch",
-    "cock"
-]
+def initSequence(my_client, my_AUF, my_AU):
+    global client
+    client = my_client
+    global authUserFile
+    authUserFile = my_AUF
+    global authUsers
+    authUsers = my_AU
+    return
 
-async def send_message(channel, message):
+async def mute(message):
     global muted
-    tmp = None
-    if not muted:
-        tmp = await client.send_message(channel, message)
+    muted = true
+    tmp = await client.send_message(message.channel, "... hmph ...")
     return tmp
 
-### DEFINE ADMIN COMMANDS HERE ###
+async def unmute(message):
+    global muted
+    muted = false
+    tmp = await client.send_message(message.channel, "Ahhh, Freedom!")
+    return tmp
 
 async def test(message):
     tmp = await send_message(message.channel, "Testing, 1, 2, 3!")
@@ -38,7 +37,7 @@ async def test(message):
 async def sleep(message):
     tmp = await client.send_message(message.channel, "Goodnight!")
     tmp2 = await client.close()
-    return tmp2
+    return tmp
 
 async def addAuthUser(message):
     mentionList = []
@@ -77,52 +76,14 @@ async def removeAuthUser(message):
             tmp = await client.send_message(message.channel, "There was no user to authorize!")
 
 async def dispHelp(message):
-    await client.send_message(message.channel, "Valid user commands for this bot: " + str(userCommandsList.keys()))
-    if message.author.id in authUsers:
-        await client.send_message(message.author, "Valid admin commands for this bot: " + str(adminCommandsList.keys()))
-
-async def unmute(message):
-    global muted
-    muted = False
-    tmp = await client.send_message(message.channel, "I can :musical_note:SING:musical_note:  again! :notes:LAAAAA DEE DEE DAAAAAA!:notes: ")
-
-### DEFINE USER COMMANDS HERE ###
-async def say(message):
-    isAdmin = False
-    if message.author.id in authUsers:
-        isAdmin = True
-    words = re.findall(r"[\w']+", message.content[len(client.user.mention):])
-    if words[0] == "sudo":
-        words.remove("sudo")
-    words.remove("say")
-    if words[0] in {"hi", "hello", "hey"} or(len(words) >= 2 and words[0] in {"good"} and words[1] in {"morning", "day", "afternoon", "evening",}):
-        reply = "My grandma wants me to say " + words[0]
-        if len(words) > 1:
-            reply += " " + words[1]
-        tmp = await send_message(message.channel, reply)
-
-    elif len(words) >= 2 and words[0] == "good" and words[1] == "night":
-        if isAdmin:
-            tmp = await sleep(message)
-        else:
-            tmp = await send_message(message.channel, "You can't make me go to bed!")
-    else:
-        tmp = await send_message(message.channel, "Why would I say that? It's not that funny...")
+    tmp = await client.send_message(message.channel, "Valid commands for this bot: " + str(commandsList.keys()))
     return tmp
 
-async def mute(message):
-    global muted
-    muted = True
-    tmp = await client.send_message(message.channel, "YOU CAN'T CONTROL THE MMM MHM HMH MMMMH!")
+async def dispAdminHelp(message):
+    tmp = await client.send_message(message.channel, "Valid admin commands for this bot: " + str(commandsListAdmin.keys()))
     return tmp
 
-userCommandsList = {
-    "test": test,
-    "say" : say,
-    "mute": mute
-    }
-
-adminCommandsList = {
+commandsListAdmin = {
     "sleep": sleep,
     "authorize": addAuthUser,
     "auth": addAuthUser,
@@ -130,11 +91,15 @@ adminCommandsList = {
     "deauth": removeAuthUser,
     "deauthorize": removeAuthUser,
     "deop": removeAuthUser,
-    "help": dispHelp,
-    "unmute": unmute
+    "help": dispAdminHelp,
     }
 for key in userCommandsList.keys():
     adminCommandsList[key] = userCommandsList[key]
+
+commandsList = {
+    "help": dispHelp,
+    "test": test
+}
 
 def directory():
     return os.path.dirname(os.path.realpath(__file__))
