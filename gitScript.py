@@ -1,7 +1,7 @@
 import discord
-import asyncio
+# import asyncio
 import csv
-import re
+# import re
 import os
 
 global client
@@ -9,78 +9,99 @@ global authUserFile
 global authUsers
 global muted
 
+
 def initSequence(my_client, my_AUF, my_AU):
     global client
-    client = my_client
+    client = discord.Client(my_client)
     global authUserFile
-    authUserFile = my_AUF
+    authUserFile = str(my_AUF)
     global authUsers
-    authUsers = my_AU
+    authUsers = list(my_AU)
     return
+
 
 async def mute(message):
     global muted
-    muted = true
+    muted = True
     tmp = await client.send_message(message.channel, "... hmph ...")
     return tmp
 
+
 async def unmute(message):
     global muted
-    muted = false
+    muted = False
     tmp = await client.send_message(message.channel, "Ahhh, Freedom!")
     return tmp
 
+
 async def test(message):
-    tmp = await send_message(message.channel, "Testing, 1, 2, 3!")
+    tmp = await client.send_message(message.channel, "Testing, 1, 2, 3!")
     return tmp
+
 
 async def sleep(message):
     tmp = await client.send_message(message.channel, "Goodnight!")
-    tmp2 = await client.close()
+    await client.close()
     return tmp
+
 
 async def addAuthUser(message):
     mentionList = []
     with open(authUserFile, 'w', newline='') as authFile:
         for mention in message.mentions:
-            if not mention.id == client.user.id and mention.id not in authUsers:
-                writer = csv.writer(authFile, delimiter = ';',
-                    quotechar = '\'', quoting = csv.QUOTE_MINIMAL)
+            if not mention.id == client.user.id and\
+                    mention.id not in authUsers:
+                writer = csv.writer(authFile, delimiter=';',
+                                    quotechar='\'',
+                                    quoting=csv.QUOTE_MINIMAL)
                 authUsers.append(mention.id)
                 writer.writerow(authUsers)
                 mentionList.append(mention.mention)
 
         if len(mentionList) > 0:
-            tmp = await client.send_message(message.channel, "Authorizing " + str(mentionList))
+            tmp = await client.send_message(message.channel,
+                                            "Authorizing " + str(mentionList))
             print("AuthUsers Updated:")
             print(str(authUsers))
         else:
-            tmp = await client.send_message(message.channel, "There was no user to authorize!")
+            tmp = await client.send_message(message.channel,
+                                            "There was no user to authorize!")
+            return tmp
+
 
 async def removeAuthUser(message):
     mentionList = []
     with open(authUserFile, 'w', newline='') as authFile:
         for mention in message.mentions:
             if not mention.id == client.user.id and mention.id in authUsers:
-                writer = csv.writer(authFile, delimiter = ';',
-                    quotechar = '\'', quoting = csv.QUOTE_MINIMAL)
+                writer = csv.writer(authFile, delimiter=';',
+                                    quotechar='\'', quoting=csv.QUOTE_MINIMAL)
                 authUsers.remove(mention.id)
                 writer.writerow(authUsers)
                 mentionList.append(mention.mention)
 
         if len(mentionList) > 0:
-            tmp = await client.send_message(message.channel, "Deauthorizing " + str(mentionList))
+            tmp = await client.send_message(message.channel, "Deauthorizing "
+                                            + str(mentionList))
             print("AuthUsers Updated:")
             print(str(authUsers))
         else:
-            tmp = await client.send_message(message.channel, "There was no user to authorize!")
+            tmp = await client.send_message(message.channel,
+                                            "There was no user to authorize!")
+            return tmp
+
 
 async def dispHelp(message):
-    tmp = await client.send_message(message.channel, "Valid commands for this bot: " + str(commandsList.keys()))
+    tmp = await client.send_message(message.channel,
+                                    "Valid commands for this bot: "
+                                    + str(commandsList.keys()))
     return tmp
 
+
 async def dispAdminHelp(message):
-    tmp = await client.send_message(message.channel, "Valid admin commands for this bot: " + str(commandsListAdmin.keys()))
+    tmp = await client.send_message(message.channel,
+                                    "Valid admin commands for this bot: "
+                                    + str(commandsListAdmin.keys()))
     return tmp
 
 commandsListAdmin = {
@@ -92,12 +113,13 @@ commandsListAdmin = {
     "deauthorize": removeAuthUser,
     "deop": removeAuthUser,
     "help": dispAdminHelp,
-    }
+}
 
 commandsList = {
     "help": dispHelp,
     "test": test
 }
+
 
 def directory():
     return os.path.dirname(os.path.realpath(__file__))
