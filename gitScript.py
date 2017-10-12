@@ -12,7 +12,7 @@ global muted
 
 def initSequence(my_client, my_AUF, my_AU):
     global client
-    client = discord.Client(my_client)
+    client = my_client
     global authUserFile
     authUserFile = str(my_AUF)
     global authUsers
