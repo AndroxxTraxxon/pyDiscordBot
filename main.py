@@ -69,8 +69,12 @@ async def on_ready():
 async def on_message(message):
     reply = ""
     # if message.content.startswith(client.user.mention):
-    myMention = message.server.get_member(client.user.id).mention
-    if message.content.startswith(myMention):
+    myMention = None
+    if message.channel.is_private:
+        myMention = client.user.mention
+    else:
+        myMention = message.server.get_member(client.user.id).mention
+    if myMention is not None and message.content.startswith(myMention):
 
         namesize = len(client.user.mention)
         words = re.findall(r"[\w']+", message.content[namesize:])
@@ -111,19 +115,21 @@ async def on_message(message):
                     reply = message.author.mention
                     reply += ", you are not permitted to use"
                     reply += " Super User commands."
-            """since "sudo" was not written,
-            we will check the normal commandsList first."""
-            elif words[0] in gitScript.commandsList.keys():
-                await gitScript.commandsList[words[0]](message)
-            elif words[0] in gitScript.commandsListAdmin.keys():
+                """
+                since "sudo" was not written,
+                we will check the normal commandsList first.
+                """
+            elif (words[0] in gitScript.commandsList.keys()):
+                    await gitScript.commandsList[words[0]](message)
+            elif (words[0] in gitScript.commandsListAdmin.keys()):
                 if message.author.id in authUsers:
                     await gitScript.commandsListAdmin[words[0]](message)
                 else:
                     reply = message.author.mention + ", you are not permitted \
                     to use Super User commands."
             else:
-                reply = message.author.mention +
-                ", that is not a known command."
+                reply = message.author.mention +\
+                    ", that is not a known command."
         else:
             reply = "What's up, " + message.author.mention + "?"
     else:

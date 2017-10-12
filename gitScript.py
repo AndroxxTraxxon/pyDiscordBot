@@ -49,8 +49,8 @@ async def addAuthUser(message):
     mentionList = []
     with open(authUserFile, 'w', newline='') as authFile:
         for mention in message.mentions:
-            if not mention.id == client.user.id and\
-                    mention.id not in authUsers:
+            if (not mention.id == client.user.id) and\
+                    (mention.id not in authUsers):
                 writer = csv.writer(authFile, delimiter=';',
                                     quotechar='\'',
                                     quoting=csv.QUOTE_MINIMAL)
@@ -99,9 +99,11 @@ async def dispHelp(message):
 
 
 async def dispAdminHelp(message):
-    tmp = await client.send_message(message.channel,
+    tmp = await client.send_message(message.author,
                                     "Valid admin commands for this bot: "
-                                    + str(commandsListAdmin.keys()))
+                                    + str(commandsListAdmin.keys())
+                                    + "\n or \"sudo update\" to refresh"
+                                    + " the bot command set.")
     return tmp
 
 commandsListAdmin = {
