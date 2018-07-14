@@ -1,2 +1,3 @@
 value = "your_token_here"
 home_channel = "your_channel_here" # preferrably a private channel with low traffic for managing the bot.
+settingsPath = "settings.json"

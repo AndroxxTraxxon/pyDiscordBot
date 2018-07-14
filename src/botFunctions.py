@@ -96,7 +96,7 @@ async def config(message:discord.Message):
     
     """Determine which parameter to modify"""
     if params[0].find('.') > 0:
-       paramChain = params[0].split('.')
+        paramChain = params[0].split('.')
     else:
         paramChain = [params[0]]
     setting_to_change = settings

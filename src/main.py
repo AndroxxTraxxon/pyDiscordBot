@@ -16,7 +16,6 @@ import botFunctions
 # The botToken is used to uniquely identify your bot.
 import botToken  # You write this file! copy from botToken.py.sample.
 print("Initializing...")
-settingsPath = "settings.json"
 client = discord.Client()
 botFunctions.client = client
 
