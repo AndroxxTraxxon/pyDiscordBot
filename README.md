@@ -42,9 +42,33 @@ Loading settings...
 At this point, the bot should appear as online within Discord. 
 
 ## Using commands
-This bot can be used by 
-## Adding new commands
+The commands on this bot can be used by mentioning the bot at the beginning of the command,
+and then writing the command, or by writing the 'calling card' (`.\` by default) before the command.
 
+Running out of the box, you should be able to get the list of commands available to a standard user by typing `.\help` in any of the channels that the bot has access to.
+## Adding new commands
+All commands must follow the following format:
+```python
+async def my_function(message:discord.Message):
+    ...
+    <my_function logic here>
+    ...
+```
+Then, the function and its accessible name (the name you type in the console) must be added to the appropriate commandsList:
+```python
+commandsList = {
+    "help"  : dispHelp,
+    ... ,
+    ... ,
+    "my_func_call" : my_function,
+}
+```
+Once this has been done (and the file has been saved), you can `.\sudo update` in one of the bot's channels to refresh the botFunctions module, and `.\my_func_call` to call your new command.
+
+### Adding Docstrings
+The 'help' function uses the docstring notation with a custom tag to provide the information to the user. This allows the helpful documentation that is available to the developers to be simultaneously available to benefit the end user. 
+
+Currently, the two docstring tags that are used by the help function are the `@usage` and the `@summary` tags. Adding these will allow the help function to natively support your function and provide help to your users.
 
 ## Hot-Swapping Functions
 A core functionality of this bot is that its command set can be updated while the bot is still running. 
