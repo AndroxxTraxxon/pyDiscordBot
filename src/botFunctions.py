@@ -70,8 +70,8 @@ async def greet():
         
 async def disp(message:discord.Message):
     """
-        @param message: [discord.Message] the message containing the command
-        @return: void
+    @param message: [discord.Message] the message containing the command
+    @return: void
     """
     global settings
     params = utils.getCommandParameters(message, "disp")
@@ -93,8 +93,8 @@ async def disp(message:discord.Message):
 
 async def config(message:discord.Message):
     """
-        @param message: [discord.Message] the message containing the command
-        @return: void
+    @param message: [discord.Message] the message containing the command
+    @return: void
     """
     global settings
     params = getCommandParameters(message, "config")
@@ -146,8 +146,8 @@ async def config(message:discord.Message):
 
 async def mute(message:discord.Message):
     """
-        @param message: [discord.Message] the message containing the command
-        @return: void
+    @param message: [discord.Message] the message containing the command
+    @return: void
     """
     global muted
     muted = True
@@ -156,8 +156,8 @@ async def mute(message:discord.Message):
 
 async def unmute(message:discord.Message):
     """
-        @param message: [discord.Message] the message containing the command
-        @return: void
+    @param message: [discord.Message] the message containing the command
+    @return: void
     """
     global muted
     muted = False
@@ -166,18 +166,18 @@ async def unmute(message:discord.Message):
 
 async def test(message:discord.Message):
     """
-        @usage: `test`
-        @param message: [discord.Message] the message containing the command
+    @usage: `test`
+    @param message: [discord.Message] the message containing the command
     """
     tmp = await client.send_message(message.channel, "Testing, 1, 2, 3!")
     return tmp
 
 async def sleep(message:discord.Message):
     """
-        @summary: Gracefully closes the application, closing connections and saving settings
-        @usage: `sleep`
-        @param message: [discord.Message] the message containing the command
-        @return: void
+    @summary: Gracefully closes the application, closing connections and saving settings
+    @usage: `sleep`
+    @param message: [discord.Message] the message containing the command
+    @return: void
     """
     await client.send_message(message.channel, random.choice(settings["greetings_leaving"]))
     await client.close()
@@ -222,8 +222,8 @@ async def roll(message:discord.Message):
         
 async def hmmm(message:discord.message):
     """
-        @param message: [discord.Message] the message containing the command
-        @return: void
+    @param message: [discord.Message] the message containing the command
+    @return: void
     """
     global hmmCount
     try:
@@ -237,8 +237,8 @@ async def hmmm(message:discord.message):
             
 async def addAuthUser(message:discord.Message):
     """
-        @param message: [discord.Message] the message containing the command
-        @return: void
+    @param message: [discord.Message] the message containing the command
+    @return: void
     """
     global settings
     try:
@@ -259,8 +259,9 @@ async def addAuthUser(message:discord.Message):
 
 async def removeAuthUser(message:discord.Message):
     """
-        @param message: [discord.Message] the message containing the command
-        @return: void
+    @usage
+    @param message: [discord.Message] the message containing the command
+    @return: void
     """
     global settings
     try:
@@ -283,9 +284,9 @@ async def removeAuthUser(message:discord.Message):
 
 async def dispHelp(message:discord.Message):
     """
-        @usage: `help [command]`
-        @summary: Displays admin functions, or usage of a specified admin command, if one is provided
-        @param message: [discord.Message] the message containing the command
+    @usage: `help [command]`
+    @summary: Displays admin functions, or usage of a specified admin command, if one is provided
+    @param message: [discord.Message] the message containing the command
     """
     params = utils.getCommandParameters(message, "help", includeCommandName=True)
     if len(params) > 1 and (params[1] in commandsList.keys() or (params[1] in commandsListAdmin.keys() and message.author.id in settings["admins"])):
@@ -313,9 +314,9 @@ async def dispHelp(message:discord.Message):
 
 async def dispAdminHelp(message:discord.Message):
     """
-        @usage: `sudo help [command]`
-        @summary: Displays admin functions, or usage of a specified admin command, if one is provided
-        @param message: [discord.Message] the message containing the command
+    @usage: `sudo help [command]`
+    @summary: Displays admin functions, or usage of a specified admin command, if one is provided
+    @param message: [discord.Message] the message containing the command
     """
     params = utils.getCommandParameters(message, "help", includeCommandName=True)
     if len(params) > 1 and (params[1] in commandsList.keys() or (params[1] in commandsListAdmin.keys() and message.author.id in settings["admins"])):
@@ -343,9 +344,9 @@ async def dispAdminHelp(message:discord.Message):
         
 async def dispDoc(message:discord.Message):
     """
-        @usage: `doc <command>`
-        @summary: Displays full documentation provided for any given function
-        @param message: [discord.Message] the message containing the command
+    @usage: `doc <command>`
+    @summary: Displays full documentation provided for any given function
+    @param message: [discord.Message] the message containing the command
     """
     params = utils.getCommandParameters(message, "doc", includeCommandName=True)
     if len(params) > 1 and (params[1] in commandsList.keys() or (params[1] in commandsListAdmin.keys() and message.author.id in settings["admins"])):
@@ -357,7 +358,10 @@ async def dispDoc(message:discord.Message):
     elif len(params) > 1 and (params[1] in commandsListAdmin.keys() and message.author.id not in settings["admins"]):
         await client.send_message(message.channel, "You do not have the access to use `{0}".format(params[1]))
     else:
-        await client.send_message(message.channel,"`{0}` is not a valid command.".format(params[1]))
+        if len(params) > 1:
+            await client.send_message(message.channel,"`{0}` is not a valid command.".format(params[1]))
+        else:
+            await client.send_message(message.channel,"`doc` usage {0}".format(utils.getDocTag(dispDoc, "usage")))
 
 commandsListAdmin = {
     "sleep": sleep,
@@ -377,7 +381,7 @@ commandsList = {
     "hmm"   : hmmm,
     "hmmm"  : hmmm,
     "hmmmm" : hmmm,
-    "config": config,
+    "set"   : config,
     "doc"   : dispDoc,
 }
 
