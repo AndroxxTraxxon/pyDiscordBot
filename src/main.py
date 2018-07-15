@@ -43,21 +43,18 @@ async def reloadFunctions(message:discord.Message):
     await client.send_message(message.channel, "Updating Command Set...")
     params = utils.getCommandParameters(message, "update")
     if "local" not in params:
-        try:
-            if "verbose" in params: await client.send_message(message.author, "Performing git fetch/pull...")
-            my_repo = git.Repo(botFunctions.directory())
-            o = my_repo.remotes.origin.\
-            o.fetch()
-            my_repo.head.ref.set_tracking_branch(o.refs.master)
-            o.pull()
-            del o
-            del my_repo
-            if "verbose" in params: await client.send_message(message.author, "git pull successful.")
-        except:
-            if "verbose" in params: await client.send_message(message.author, "Git fetch/pull sequence failed...")
+        if "verbose" in params: await client.send_message(message.channel, "Performing git fetch/pull...")
+        my_repo = git.Repo(botFunctions.directory() + "\..")
+        o = my_repo.remotes.origin
+        o.fetch()
+        my_repo.head.ref.set_tracking_branch(o.refs.master)
+        o.pull()
+        del o
+        del my_repo
+        if "verbose" in params: await client.send_message(message.channel, "git pull successful.")
     else:
-        if "verbose" in params: await client.send_message(message.author, "Using local botFunctions...")
-    await client.send_message(message.author, "Reloading Command Set...")
+        if "verbose" in params: await client.send_message(message.channel, "Using local botFunctions...")
+    await client.send_message(message.channel, "Reloading Command Set...")
     importlib.reload(botFunctions)
     importlib.reload(utils)
     botFunctions.client = client
@@ -67,7 +64,7 @@ async def reloadFunctions(message:discord.Message):
     if "verbose" in params: await client.send_message(message.author,
                                                       "Admin Command Set Updated: "
                                                       + str(list(botFunctions.commandsListAdmin.keys())))
-    await client.send_message(message.author, "Commands updated successfuly.")
+    await client.send_message(message.channel, "Commands updated successfuly.")
 
 @client.event
 async def on_message(message):
