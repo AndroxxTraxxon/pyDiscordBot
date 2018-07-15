@@ -31,7 +31,7 @@ To run the bot in the console, move to the `src` directory, and run the `main.py
 
 ```console
 > cd \path\to\pyDiscordBot\src
-\path\to\pyDiscordBot\src> python .\main.py
+> python main.py
 ```
 The bot should start running, and it will look something like this...
 ```
@@ -73,4 +73,4 @@ Currently, the two docstring tags that are used by the help function are the `@u
 ## Hot-Swapping Functions
 A core functionality of this bot is that its command set can be updated while the bot is still running. 
 the command to do so is to write `.\sudo update` in the command line. 
-This will trigger a `git fetch & git pull` by default (use ` --local` to just update with local changes) and reload the botFunctions
+This will trigger a `git fetch & git pull` by default (use `.\sudo update local` to just update with local changes) and reload the botFunctions
