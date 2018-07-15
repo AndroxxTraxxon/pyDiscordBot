@@ -6,13 +6,15 @@ A basic
  >By [@AndroxxTraxxon](https://github.com/AndroxxTraxxon) - David Culbreth
 
 ## Requirements
- - Python 3.6+ (NOT COMPATIBLE WITH 3.5... I used type hints. removing those should get it running in 3.x)
+ - Python 3.6 (NOT COMPATIBLE WITH 3.5 OR 3.7... I used type hints. removing those should get it running in 3.0 - 3.6)
  - [discord.py](https://github.com/Rapptz/discord.py)
  - An [Application/Bot Token from Discord](https://discordapp.com/developers/docs/intro)
 
 
 ## Getting Started
-Assuming you have Python and discord.py installed, and this repo downloaded... 
+Assuming you have Python and discord.py installed, and this repo downloaded...
+ - make sure that the bot is authorized on your server 
+   -[Adding your bot to your server](https://github.com/jagrosh/MusicBot/wiki/Adding-Your-Bot-To-Your-Server)
  - make a copy of `botToken.py.sample`, and rename it to `botToken.py` 
    - *(the .gitignore keeps this out to help hide your secret token.)*
  - Inside `botToken.py`, add the string value of your token from the discord developer API as the value:
