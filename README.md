@@ -6,7 +6,7 @@ A basic
  >By [@AndroxxTraxxon](https://github.com/AndroxxTraxxon) - David Culbreth
 
 ## Requirements
- - Python 3.6 (NOT COMPATIBLE WITH 3.5 OR 3.7... I used type hints. removing those should get it running in 3.0 - 3.6)
+ - Python 3.6 
  - [discord.py, version 0.16.12](https://github.com/Rapptz/discord.py)
  - An [Application/Bot Token from Discord](https://discordapp.com/developers/docs/intro)
 
