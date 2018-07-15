@@ -1,10 +1,18 @@
+"""
+
+@author: David Culbreth
+
+
+"""
+
 import discord
 import json
 import os
-import re
 import random
 import pprint
 import botToken
+import botUtils as utils
+from botUtils import getCommandParameters
 
 global client
 global muted
@@ -28,6 +36,7 @@ try:
     client
 except NameError:
     client = None
+    
 
 def loadSettings():
     global settings
@@ -37,25 +46,35 @@ def loadSettings():
                 settings = defaultSettings.copy()
                 settings.update(json.load(settingsFile))
             except json.decoder.JSONDecodeError:
-                print("Malformed file. Using default settings...")
+                print("File {0} is not properly JSON formatted.\nUsing default settings...".format(botToken.settingsPath))
                 storeSettings()
     except FileNotFoundError:
-        print("File Not Found. Using default settings...")
+        print("File {0} Not Found. Using default settings...".format(botToken.settingsPath))
         storeSettings()
+
+def storeSettings(verbose = False):
+    global settings
+    
+    if settings is None:
+        if verbose: print("Settings undefined. Using default settings...")
+        settings = dict(defaultSettings)
+    with open(botToken.settingsPath, "w+") as settingsFile:
+        if verbose: 
+            print("Saving current settings to {0}:".format(botToken.settingsPath))
+            pprint.pprint(settings)
+        json.dump(settings, settingsFile)
+    if verbose:print("Settings save complete.")
 
 async def greet():
     await client.send_message(client.get_channel(botToken.home_channel), random.choice(settings["greetings"]))
         
-def storeSettings():
-    global settings
-    if settings is None:
-        settings = dict(defaultSettings)
-    with open(botToken.settingsPath, "w+") as settingsFile:
-        json.dump(settings, settingsFile)
-        
 async def disp(message:discord.Message):
+    """
+        @param message: [discord.Message] the message containing the command
+        @return: void
+    """
     global settings
-    params = re.findall(r"[\w']+", message.content[message.content.find("disp")+len("disp"):])
+    params = utils.getCommandParameters(message, "disp")
     if len(params) == 0:
         await client.send_message(message.channel, "Ummm... what to display...?")
     else:
@@ -73,8 +92,12 @@ async def disp(message:discord.Message):
     return
 
 async def config(message:discord.Message):
+    """
+        @param message: [discord.Message] the message containing the command
+        @return: void
+    """
     global settings
-    params = re.findall(r"[\w']+", message.content[message.content.find("config")+len("config"):])
+    params = getCommandParameters(message, "config")
     if len(params) < 2:
         await client.send_message(message.channel, "More info required for config")
         await client.send_message(message.author, "Usage: `@Mention config key[.subkey[.subkey[...]]] value (number, string, or list)` ")
@@ -114,33 +137,48 @@ async def config(message:discord.Message):
     try:
         setting_to_change[lastKey] = newValue
         await client.send_message(message.channel, "Config Successful: {0} = {1}".format(params[0], setting_to_change[lastKey]))
-    except:    
+    except KeyError|ValueError:   
         if lastKey == '*' and isinstance(setting_to_change, list):
             setting_to_change.append(newValue)
             await client.send_message(message.channel, "Config Successful: {0} = {1}".format(params[0][:-2], setting_to_change))
         else:
-            await client.send_message(message.channel, "Config Config Failed: KeyError or ValueError, or non-iterable setting")
-                
+            await client.send_message(message.channel, "Config Failed: KeyError or ValueError, or non-iterable setting")     
+
 async def mute(message:discord.Message):
+    """
+        @param message: [discord.Message] the message containing the command
+        @return: void
+    """
     global muted
     muted = True
     tmp = await client.send_message(message.channel, "... hmph ... (now replying to all messages privately)")
     return tmp
 
-
 async def unmute(message:discord.Message):
+    """
+        @param message: [discord.Message] the message containing the command
+        @return: void
+    """
     global muted
     muted = False
     tmp = await client.send_message(message.channel, "Ahhh, Freedom! (now replying to all messages in the channel)")
     return tmp
 
-
 async def test(message:discord.Message):
+    """
+        @usage: `test`
+        @param message: [discord.Message] the message containing the command
+    """
     tmp = await client.send_message(message.channel, "Testing, 1, 2, 3!")
     return tmp
 
-
 async def sleep(message:discord.Message):
+    """
+        @summary: Gracefully closes the application, closing connections and saving settings
+        @usage: `sleep`
+        @param message: [discord.Message] the message containing the command
+        @return: void
+    """
     await client.send_message(message.channel, random.choice(settings["greetings_leaving"]))
     await client.close()
     storeSettings()
@@ -148,8 +186,17 @@ async def sleep(message:discord.Message):
     return
 
 async def roll(message:discord.Message):
+    """
+    @usage: `roll ndm [qdp [rds]]` for `n`,`q`,`p` for number of dice rolled
+    and `m`,`p`,`s` for number of sides on the dice
+    Example: `roll 2d8` (2 x 8-sided die)
+    Example: `roll 3d6 5d4 1d20` (3x 6-sided die, 5x 4-sided die, 1x 20-sided die)
+    @summary: Rolls a set of dice a given number of times and returns the set of rolls, 
+    as well as its total value.
+    @param message: [discord.Message] the message containing the command
+    """
     await client.send_typing(message.channel)
-    params = re.findall(r"[\w']+", message.content[message.content.find("roll")+len("roll"):])
+    params = utils.getCommandParameters(message, "roll")
     if len(params) > 0:
         rollValues = dict()
         for rollset in params:
@@ -174,6 +221,10 @@ async def roll(message:discord.Message):
         await client.send_message(message.channel, "Give me some dice!")
         
 async def hmmm(message:discord.message):
+    """
+        @param message: [discord.Message] the message containing the command
+        @return: void
+    """
     global hmmCount
     try:
         hmmCount += 1
@@ -183,9 +234,12 @@ async def hmmm(message:discord.message):
         await client.send_message(message.channel, "There seems to be a lot of hmm-ing and haw-ing around here...")
     else:
         await client.send_message(message.channel, "hmmm, indeed...")
-        
-        
+            
 async def addAuthUser(message:discord.Message):
+    """
+        @param message: [discord.Message] the message containing the command
+        @return: void
+    """
     global settings
     try:
         message.mentions.remove(client.user)
@@ -203,8 +257,11 @@ async def addAuthUser(message:discord.Message):
     else:
         await client.send_message(message.channel, "There was no user to authorize!")
 
-
 async def removeAuthUser(message:discord.Message):
+    """
+        @param message: [discord.Message] the message containing the command
+        @return: void
+    """
     global settings
     try:
         message.mentions.remove(client.user)
@@ -224,22 +281,87 @@ async def removeAuthUser(message:discord.Message):
     else:
         await client.send_message(message.channel, "There was no user to authorize!")
 
-
 async def dispHelp(message:discord.Message):
-    await client.send_message(message.channel,"Valid commands for this bot: "+ str(commandsList.keys()))
-
+    """
+        @usage: `help [command]`
+        @summary: Displays admin functions, or usage of a specified admin command, if one is provided
+        @param message: [discord.Message] the message containing the command
+    """
+    params = utils.getCommandParameters(message, "help", includeCommandName=True)
+    if len(params) > 1 and (params[1] in commandsList.keys() or (params[1] in commandsListAdmin.keys() and message.author.id in settings["admins"])):
+        if params[1] in commandsList.keys():
+            cmd_docstring = commandsList[params[1]].__doc__
+        else:
+            cmd_docstring = commandsListAdmin[params[1]].__doc__
+        tagStrings = cmd_docstring.split('@')
+        usageString = None
+        summaryString = None
+        for tag in tagStrings:
+            if tag.startswith("usage"):
+                usageString = tag[len("usage"):]
+            elif tag.startswith("summary"):
+                summaryString = tag[len("summary"):]
+        if usageString is not None:
+            await client.send_message(message.channel, "Usage {0}".format(usageString))
+            if summaryString is not None:
+                await client.send_message(message.channel, "Summary {0}".format(summaryString))
+        else:
+            await client.send_message(message.channel, "Documentation {0}".format(cmd_docstring)) 
+              
+    else:
+        await client.send_message(message.channel,"Valid commands for this bot: "+ str(commandsList.keys()))
 
 async def dispAdminHelp(message:discord.Message):
-    await client.send_message(message.author,"Valid admin commands for this bot: "
-                        + str(list(commandsListAdmin.keys()) + ["update"]))
+    """
+        @usage: `sudo help [command]`
+        @summary: Displays admin functions, or usage of a specified admin command, if one is provided
+        @param message: [discord.Message] the message containing the command
+    """
+    params = utils.getCommandParameters(message, "help", includeCommandName=True)
+    if len(params) > 1 and (params[1] in commandsList.keys() or (params[1] in commandsListAdmin.keys() and message.author.id in settings["admins"])):
+        if params[1] in commandsListAdmin.keys():
+            cmd_docstring = commandsListAdmin[params[1]].__doc__
+        else:
+            cmd_docstring = commandsList[params[1]].__doc__
+        tagStrings = cmd_docstring.split('@')
+        usageString = None
+        summaryString = None
+        for tag in tagStrings:
+            if tag.startswith("usage"):
+                usageString = tag[len("usage"):]
+            elif tag.startswith("summary"):
+                summaryString = tag[len("summary"):]
+        if usageString is not None:
+            await client.send_message(message.channel, "Usage {0}".format(usageString))
+            if summaryString is not None:
+                await client.send_message(message.channel, "Summary {0}".format(summaryString))
+        else:
+            await client.send_message(message.channel, "Documentation {0}".format(cmd_docstring)) 
+              
+    else:
+        await client.send_message(message.channel,"Valid commands for this bot: "+ str(commandsList.keys()))
+        
+async def dispDoc(message:discord.Message):
+    """
+        @usage: `doc <command>`
+        @summary: Displays full documentation provided for any given function
+        @param message: [discord.Message] the message containing the command
+    """
+    params = utils.getCommandParameters(message, "doc", includeCommandName=True)
+    if len(params) > 1 and (params[1] in commandsList.keys() or (params[1] in commandsListAdmin.keys() and message.author.id in settings["admins"])):
+        if params[1] in commandsList.keys():
+            cmd_docstring = commandsList[params[1]].__doc__
+        else:
+            cmd_docstring = commandsListAdmin[params[1]].__doc__
+        await client.send_message(message.channel, cmd_docstring)
+    elif len(params) > 1 and (params[1] in commandsListAdmin.keys() and message.author.id not in settings["admins"]):
+        await client.send_message(message.channel, "You do not have the access to use `{0}".format(params[1]))
+    else:
+        await client.send_message(message.channel,"`{0}` is not a valid command.".format(params[1]))
 
 commandsListAdmin = {
     "sleep": sleep,
-    "authorize": addAuthUser,
-    "auth": addAuthUser,
     "op": addAuthUser,
-    "deauth": removeAuthUser,
-    "deauthorize": removeAuthUser,
     "deop": removeAuthUser,
     "help": dispAdminHelp,
     "disp": disp
@@ -255,7 +377,8 @@ commandsList = {
     "hmm"   : hmmm,
     "hmmm"  : hmmm,
     "hmmmm" : hmmm,
-    "config": config
+    "config": config,
+    "doc"   : dispDoc,
 }
 
 

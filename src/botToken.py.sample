@@ -1,3 +1,32 @@
+"""
+
+@author: David Culbreth
+
+The bot token contains settings that should remain constant, or will not change frequently (or ever)
+Any change to these parameters will require the bot to be fully restarted.
+"""
+
+
+"""
+These settings must be set by you before you launch the bot. 
+See https://github.com/AndroxxTraxxon/pyDiscordBot/tree/master#getting-started for details.
+
+"""
+# Your secret bot token that you must share with no one.
 value = "your_token_here"
+
+# The channel id for the bot's debug output.
 home_channel = "your_channel_here" # preferrably a private channel with low traffic for managing the bot.
+
+
+"""
+These values must not be blank. 
+It is best to leave them as the , unless you know what you're doing.
+"""
+# The path of the rest of the settings,
+#     relative to the main.py file.
 settingsPath = "settings.json"
+
+# The text that must be written to call the bot 
+#     without using its @Mention in the console.
+callingCard = ".\\"
